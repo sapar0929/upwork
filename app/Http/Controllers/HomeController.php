@@ -17,8 +17,8 @@ class HomeController extends Controller
             'experienceLevels.*' => ['nullable', 'integer', 'between:0,2'],
             'jobTypes' => ['nullable', 'array'],
             'jobTypes.*' => ['nullable', 'integer', 'between:0,1'],
-            'HourlyMinPrice' => ['nullable', 'integer', 'min:0'],
-            'HourlyMaxPrice' => ['nullable', 'integer', 'min:0'],
+            'hourlyMinPrice' => ['nullable', 'integer', 'min:0'],
+            'hourlyMaxPrice' => ['nullable', 'integer', 'min:0'],
             'fixedPrices' => ['nullable', 'array'],
             'fixedPrices.*' => ['nullable', 'integer', 'between:0,4'],
             'fixedMinPrice' => ['nullable', 'integer', 'min:0'],
@@ -37,8 +37,8 @@ class HomeController extends Controller
         $f_profileId = $request->has('profileId') ? $request->profileId : null;
         $f_experienceLevels = $request->has('experienceLevels') ? $request->experienceLevels : null;
         $f_jobTypes = $request->has('jobTypes') ? $request->jobTypes : null;
-        $f_HourlyMinPrice = $request->has('HourlyMinPrice') ? $request->HourlyMinPrice : null;
-        $f_HourlyMaxPrice = $request->has('HourlyMaxPrice') ? $request->HourlyMaxPrice : null;
+        $f_hourlyMinPrice = $request->has('hourlyMinPrice') ? $request->hourlyMinPrice : null;
+        $f_hourlyMaxPrice = $request->has('hourlyMaxPrice') ? $request->hourlyMaxPrice : null;
         $f_fixedPrices = $request->has('fixedPrices') ? $request->fixedPrices : null;
         $f_fixedMinPrice = $request->has('fixedMinPrice') ? $request->fixedMinPrice : null;
         $f_fixedMaxPrice = $request->has('fixedMaxPrice') ? $request->fixedMaxPrice : null;
@@ -53,8 +53,8 @@ class HomeController extends Controller
             $f_profileId, // profileId
             $f_experienceLevels, // experienceLevels
             $f_jobTypes, // jobTypes
-            $f_HourlyMinPrice, // HourlyMinPrice
-            $f_HourlyMaxPrice, // HourlyMaxPrice
+            $f_hourlyMinPrice, // hourlyMinPrice
+            $f_hourlyMaxPrice, // hourlyMaxPrice
             $f_fixedPrices, // fixedPrices
             $f_fixedMinPrice, // fixedMinPrice
             $f_fixedMaxPrice, // fixedMaxPrice

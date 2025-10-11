@@ -55,7 +55,7 @@ class Work extends Model
     //
 
     public function scopeFilterQuery($query, $f_clientId, $f_freelancerId, $f_profileId, $f_experienceLevels, $f_jobTypes,
-                                     $f_HourlyMinPrice, $f_HourlyMaxPrice, $f_fixedPrices, $f_fixedMinPrice, $f_fixedMaxPrice,
+                                     $f_hourlyMinPrice, $f_hourlyMaxPrice, $f_fixedPrices, $f_fixedMinPrice, $f_fixedMaxPrice,
                                      $f_numberOfProposals, $f_projectTypes, $f_projectLengths, $f_hoursPerWeeks)
     {
         return $query
@@ -77,15 +77,15 @@ class Work extends Model
             })
             ->when(isset($f_jobTypes) and count($f_jobTypes) > 0 and in_array(0, $f_jobTypes), function ($query) use (
                 $f_jobTypes,
-                $f_HourlyMinPrice,
-                $f_HourlyMaxPrice,
+                $f_hourlyMinPrice,
+                $f_hourlyMaxPrice,
             ) {
                 return $query->whereIn('job_type', $f_jobTypes)
-                    ->when(isset($f_HourlyMinPrice), function ($query) use ($f_HourlyMinPrice) {
-                        return $query->where('price', '>=', $f_HourlyMinPrice);
+                    ->when(isset($f_hourlyMinPrice), function ($query) use ($f_hourlyMinPrice) {
+                        return $query->where('price', '>=', $f_hourlyMinPrice);
                     })
-                    ->when(isset($f_HourlyMaxPrice), function ($query) use ($f_HourlyMaxPrice) {
-                        return $query->where('price', '<=', $f_HourlyMaxPrice);
+                    ->when(isset($f_hourlyMaxPrice), function ($query) use ($f_hourlyMaxPrice) {
+                        return $query->where('price', '<=', $f_hourlyMaxPrice);
                     });
             })
             ->when(isset($f_jobTypes) and count($f_jobTypes) > 0 and in_array(1, $f_jobTypes), function ($query) use (
@@ -95,6 +95,12 @@ class Work extends Model
                 $f_fixedMaxPrice
             ) {
                 return $query->whereIn('job_type', $f_jobTypes)
+                    ->when(isset($f_fixedMinPrice), function ($query) use ($f_fixedMinPrice) {
+                        return $query->where('price', '>=', $f_fixedMinPrice);
+                    })
+                    ->when(isset($f_fixedMaxPrice), function ($query) use ($f_fixedMaxPrice) {
+                        return $query->where('price', '<=', $f_fixedMaxPrice);
+                    })
                     ->when(isset($f_fixedPrices) and count($f_fixedPrices) > 0, function ($query) use ($f_fixedPrices) {
                         return $query->where(function ($query) use ($f_fixedPrices) {
                             foreach ($f_fixedPrices as $f_fixedPrice) {
@@ -104,12 +110,6 @@ class Work extends Model
                                 });
                             }
                         });
-                    })
-                    ->when(isset($f_fixedMinPrice), function ($query) use ($f_fixedMinPrice) {
-                        return $query->where('price', '>=', $f_fixedMinPrice);
-                    })
-                    ->when(isset($f_fixedMaxPrice), function ($query) use ($f_fixedMaxPrice) {
-                        return $query->where('price', '<=', $f_fixedMaxPrice);
                     });
             })
             ->when(isset($f_numberOfProposals) and count($f_numberOfProposals) > 0, function ($query) use ($f_numberOfProposals) {
