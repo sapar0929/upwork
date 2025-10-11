@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Client;
 use App\Models\Freelancer;
-use App\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

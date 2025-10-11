@@ -8,8 +8,6 @@ use App\Models\Profile;
 use App\Models\Proposal;
 use App\Models\Review;
 use App\Models\User;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Verification;
 use App\Models\Work;
 use Illuminate\Database\Seeder;
@@ -47,7 +45,7 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         Work::factory()
-            ->count(50)
+            ->count(100)
             ->create();
 
         Proposal::factory()

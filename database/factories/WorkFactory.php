@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Client;
-use App\Models\Location;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -31,7 +30,7 @@ class WorkFactory extends Factory
             'body' => fake()->paragraphs(3, true),
             'experience_level' => fake()->numberBetween(0, 2), // 0)EntryLevel 1)Intermediate 2)Expert
             'job_type' => fake()->numberBetween(0, 1), // 0)Hourly 1)FixedPrice
-            'price' => fake()->numberBetween(10, 100),
+            'price' => fake()->numberBetween(0, 5500),
             'number_of_proposals' => fake()->numberBetween(0, 50),
             'project_type' => fake()->numberBetween(0, 1), // 0)One-time 1)Ongoing
             'project_length' => fake()->numberBetween(0, 3), // 0)LessThan1Month 1)1to3Months 2)3to6Months 3)MoreThan6Months
