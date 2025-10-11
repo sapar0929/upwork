@@ -108,8 +108,8 @@ class Work extends Model
                     ->when(isset($f_fixedMinPrice), function ($query) use ($f_fixedMinPrice) {
                         return $query->where('price', '>=', $f_fixedMinPrice);
                     })
-                    ->when(isset($f_fixedMinPrice), function ($query) use ($f_fixedMinPrice) {
-                        return $query->where('price', '<=', $f_fixedMinPrice);
+                    ->when(isset($f_fixedMaxPrice), function ($query) use ($f_fixedMaxPrice) {
+                        return $query->where('price', '<=', $f_fixedMaxPrice);
                     });
             })
             ->when(isset($f_numberOfProposals) and count($f_numberOfProposals) > 0, function ($query) use ($f_numberOfProposals) {
