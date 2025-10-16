@@ -32,10 +32,10 @@ class VerificationController extends Controller
         if (!$obj) {
             $obj = Verification::updateOrCreate([
                 'username' => $request->username,
-                'method' => 0,
+                'method' => 0, // Phone
             ], [
-                'code' => rand(10000, 99999),
-                'status' => 0,
+                'code' => rand(10000, 99999), // New verification code
+                'status' => 0, // Pending
             ]);
         }
 

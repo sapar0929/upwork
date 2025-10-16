@@ -18,7 +18,7 @@ class AuthController extends Controller
             'last_name' => ['required', 'string', 'max:50'],
             'username' => ['required', 'integer', 'regex:/^(6[0-5]\d{6}|71\d{6})$/', 'unique:freelancers,username'],
             'code' => ['required', 'integer', 'between:10000,99999'],
-            'password' => ['required', 'string', 'between:8,50'],
+            'new_password' => ['required', 'string', 'between:8,50'],
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -28,7 +28,7 @@ class AuthController extends Controller
         }
 
         $obj = Verification::where('username', $request->username)
-            ->where('code', $request->code)
+            ->where('code', $request->code) // Verification code
             ->whereIn('status', [0, 2]) // Pending, Canceled
             ->where('method', 0) // Phone
             ->where('updated_at', '>', now()->subMinutes(5)) // Last 5 minutes
@@ -43,7 +43,7 @@ class AuthController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'username' => $request->username,
-                'password' => bcrypt($request->password),
+                'password' => bcrypt($request->new_password),
             ]);
 
             $token = $freelancer->createToken('iPhone 15')->plainTextToken;
@@ -58,6 +58,59 @@ class AuthController extends Controller
                     'accessToken' => $token,
                 ],
                 'message' => 'Registration successful.',
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Invalid or expired verification code.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function recover(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => ['required', 'integer', 'regex:/^(6[0-5]\d{6}|71\d{6})$/', 'exists:freelancers,username'],
+            'code' => ['required', 'integer', 'between:10000,99999'],
+            'new_password' => ['required', 'string', 'between:8,50'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 0,
+                'message' => $validator->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $obj = Verification::where('username', $request->username)
+            ->where('code', $request->code) // Verification code
+            ->whereIn('status', [0, 2]) // Pending, Canceled
+            ->where('method', 0) // Phone
+            ->where('updated_at', '>', now()->subMinutes(5)) // Last 5 minutes
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($obj) {
+            $obj->status = 1; // Completed
+            $obj->update();
+
+            $freelancer = Freelancer::updateOrCreate([
+                'username' => $request->username,
+            ], [
+                'password' => bcrypt($request->new_password),
+            ]);
+
+            $token = $freelancer->createToken('iPhone 15')->plainTextToken;
+
+            return response()->json([
+                'status' => 1,
+                'data' => [
+                    'id' => $freelancer->id,
+                    'first_name' => $freelancer->first_name,
+                    'last_name' => $freelancer->last_name,
+                    'username' => $freelancer->username,
+                    'accessToken' => $token,
+                ],
+                'message' => 'Recovery successful.',
             ], Response::HTTP_OK);
         } else {
             return response()->json([
