@@ -6,11 +6,49 @@ use App\Http\Controllers\Controller;
 use App\Models\Freelancer;
 use App\Models\Verification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => ['required', 'integer', 'regex:/^(6[0-5]\d{6}|71\d{6})$/', 'exists:freelancers,username'],
+            'password' => ['required', 'string', 'between:8,50'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 0,
+                'message' => $validator->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $freelancer = Freelancer::where('username', $request->username)->first();
+
+        if (!$freelancer || !Hash::check($request->password, $freelancer->password)) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Invalid credentials',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $token = $freelancer->createToken('iPhone 15')->plainTextToken;
+
+        return response()->json([
+            'status' => 1,
+            'data' => [
+                'id' => $freelancer->id,
+                'first_name' => $freelancer->first_name,
+                'last_name' => $freelancer->last_name,
+                'username' => $freelancer->username,
+                'accessToken' => $token,
+            ],
+            'message' => 'Logged in successfully.',
+        ], Response::HTTP_OK);
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -57,7 +95,7 @@ class AuthController extends Controller
                     'username' => $freelancer->username,
                     'accessToken' => $token,
                 ],
-                'message' => 'Registration successful.',
+                'message' => 'Registered successfully.',
             ], Response::HTTP_OK);
         } else {
             return response()->json([
@@ -110,7 +148,7 @@ class AuthController extends Controller
                     'username' => $freelancer->username,
                     'accessToken' => $token,
                 ],
-                'message' => 'Recovery successful.',
+                'message' => 'Recovered successfully.',
             ], Response::HTTP_OK);
         } else {
             return response()->json([
@@ -118,5 +156,14 @@ class AuthController extends Controller
                 'message' => 'Invalid or expired verification code.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+    }
+
+    public function logout()
+    {
+        auth('freelancer_api')->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => 1,
+        ], Response::HTTP_OK);
     }
 }

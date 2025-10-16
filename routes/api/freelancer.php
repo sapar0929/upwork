@@ -17,8 +17,8 @@ Route::prefix('v1/freelancer')
         Route::controller(AuthController::class)
             ->middleware('throttle:10,1')
             ->group(function () {
-                Route::post('register', 'register');
                 Route::post('login', 'login');
+                Route::post('register', 'register');
                 Route::post('recover', 'recover');
                 Route::post('logout', 'logout')->middleware('auth:sanctum');
             });

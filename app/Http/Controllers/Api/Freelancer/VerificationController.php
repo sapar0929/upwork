@@ -70,7 +70,7 @@ class VerificationController extends Controller
         if ($obj) {
             return response()->json([
                 'status' => 1,
-                'message' => 'Verification successful.',
+                'message' => 'Verified successfully.',
             ], Response::HTTP_OK);
         } else {
             return response()->json([
