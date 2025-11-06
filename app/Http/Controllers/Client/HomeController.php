@@ -1,14 +1,29 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
+use App\Http\Controllers\Controller;
+use App\Models\AuthAttempt;
+use App\Models\User;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        Auth::loginUsingId(1);
+//        Auth::logout();
+
+//        $username = 'admin';
+//        $password = 'upwork2026';
+//
+//        if (Auth::attempt(['username' => $username, 'password' => $password])) {
+//            $request->session()->regenerate();
+//            return to_route('admin.dashboard');
+//        }
+
         $request->validate([
             'clientId' => ['nullable', 'integer', 'min:1'],
             'freelancerId' => ['nullable', 'integer', 'min:0'],
@@ -66,7 +81,7 @@ class HomeController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('home.index')
+        return view('client.home.index')
             ->with([
                 'works' => $works,
             ]);
